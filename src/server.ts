@@ -93,9 +93,9 @@ function clientIp(req: http.IncomingMessage): string {
 
 // --- Router -------------------------------------------------------------------
 
-async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, url: URL): Promise<void> {
+async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, url: URL, pathname: string): Promise<void> {
   // GET /api/health — diagnóstico sin exponer claves (6.4).
-  if (url.pathname === "/api/health" && req.method === "GET") {
+  if (pathname === "/api/health" && req.method === "GET") {
     return json(res, 200, {
       ok: true,
       provider: llm.provider,
@@ -105,7 +105,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, ur
   }
 
   // POST /api/chat — { sessionId?, message } → { reply, toolCalls[], needsConfirmation }.
-  if (url.pathname === "/api/chat" && req.method === "POST") {
+  if (pathname === "/api/chat" && req.method === "POST") {
     const ip = clientIp(req);
     if (rateLimited(ip)) {
       return json(res, 429, { error: "Demasiadas solicitudes. Espera un minuto e intenta de nuevo." });
@@ -140,7 +140,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse, ur
   }
 
   // GET /api/sessions/:id — historial completo, sin system prompt (LLM07).
-  const match = /^\/api\/sessions\/([a-f0-9-]{36})$/.exec(url.pathname);
+  const match = /^\/api\/sessions\/([a-f0-9-]{36})$/.exec(pathname);
   if (match && req.method === "GET") {
     const session = obtenerSesion(match[1]!);
     if (!session) return json(res, 404, { error: "Sesión no encontrada." });
@@ -179,15 +179,15 @@ async function serveStatic(res: http.ServerResponse, url: URL): Promise<void> {
 export function createServer(): http.Server {
   return http.createServer(async (req, res) => {
     const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
+    // En Vercel, la rewrite envía todo a /api/bundle?path=<ruta-original>;
+    // se reconstruye el path original para enrutar igual que en local.
+    const rewritten = url.searchParams.get("path");
+    const effectivePath = (rewritten !== null ? "/" + rewritten : url.pathname).replace(/\/{2,}/g, "/") || "/";
     try {
-      // En Vercel, las rewrites envían todo al path de la función serverless
-      // (/api/bundle): se normaliza a "/" para servir el front desde Node.
-      if (url.pathname === "/api/bundle" || url.pathname === "/api/index") {
-        await serveStatic(res, new URL("/", "http://localhost"));
-      } else if (url.pathname.startsWith("/api/")) {
-        await handleApi(req, res, url);
+      if (effectivePath.startsWith("/api/")) {
+        await handleApi(req, res, url, effectivePath);
       } else if (req.method === "GET") {
-        await serveStatic(res, url);
+        await serveStatic(res, new URL(effectivePath, "http://localhost"));
       } else {
         json(res, 405, { error: "Método no permitido" });
       }
