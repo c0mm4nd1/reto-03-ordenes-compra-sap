@@ -19,8 +19,13 @@ import {
 // Contrato acotado de la respuesta de Gemini: solo lo que usamos.
 const GeminiPartSchema = z.object({
   text: z.string().optional(),
+  thoughtSignature: z.string().optional(),
   functionCall: z
-    .object({ name: z.string(), args: z.record(z.unknown()).optional() })
+    .object({
+      name: z.string(),
+      args: z.record(z.unknown()).optional(),
+      thoughtSignature: z.string().optional(),
+    })
     .optional(),
 });
 
@@ -116,6 +121,7 @@ export class GeminiAdapter implements LlmAdapter {
         id: `call_${Date.now()}_${i}`,
         name: p.functionCall!.name,
         arguments: p.functionCall!.args ?? {},
+        thoughtSignature: p.functionCall!.thoughtSignature ?? p.thoughtSignature,
       }));
 
     return {
@@ -138,9 +144,13 @@ export class GeminiAdapter implements LlmAdapter {
           role: "model",
           parts: [
             // Las llamadas a herramienta del asistente se reenvían como functionCall
-            // para que Gemini mantenga el contexto de la conversación.
+            // (con su thoughtSignature) para que Gemini mantenga el contexto.
             ...(m.toolCalls ?? []).map((c) => ({
-              functionCall: { name: c.name, args: c.arguments as Record<string, unknown> },
+              functionCall: {
+                name: c.name,
+                args: c.arguments as Record<string, unknown>,
+                ...(c.thoughtSignature ? { thoughtSignature: c.thoughtSignature } : {}),
+              },
             })),
             ...(m.content ? [{ text: m.content }] : []),
           ],

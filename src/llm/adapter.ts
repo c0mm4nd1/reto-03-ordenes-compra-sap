@@ -18,7 +18,13 @@ export type ChatMessage =
   | { role: "assistant"; content: string | null; toolCalls?: ToolCallRequest[] }
   | { role: "tool"; name: string; content: string };
 
-export type ToolCallRequest = { id: string; name: string; arguments: unknown };
+export type ToolCallRequest = {
+  id: string;
+  name: string;
+  arguments: unknown;
+  /** Firma de pensamiento del modelo: Gemini exige reenviarla al replayar. */
+  thoughtSignature?: string;
+};
 
 export type LlmResponse = {
   content: string | null;
