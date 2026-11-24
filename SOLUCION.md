@@ -62,10 +62,10 @@ Principio transversal (CA2): **el modelo no puede afirmar un valor que no salga 
 | Decisión | Valor | Por qué |
 |---|---|---|
 | Proveedor | Google Gemini | Capa gratuita generosa para la demo, API REST simple sin SDK extra (menor superficie de suministro), function calling nativo. |
-| Modelo | `gemini-2.0-flash` | Rápido y barato, suficiente para orquestar 6 herramientas con esquemas pequeños; el razonamiento de negocio no vive en el modelo, vive en `rules.ts`. |
+| Modelo | `gemini-flash-latest` | Rápido y barato, suficiente para orquestar 6 herramientas con esquemas pequeños; el razonamiento de negocio no vive en el modelo, vive en `rules.ts`. |
 | Adaptador | REST directo (`src/llm/gemini.ts`) | Una dependencia menos y control total de timeout (30 s) y conteo de tokens. Cambiar de proveedor = implementar una interfaz de un método, sin tocar el ciclo. |
 
-**Costo estimado por caso procesado** (con `gemini-2.0-flash`, precios de lista a la fecha):
+**Costo estimado por caso procesado** (con `gemini-flash-latest`, precios de lista a la fecha):
 
 - Entrada: system prompt (~700 tokens) + historial + tool specs ≈ 2.500 tokens/caso.
 - Salida: 1–5 llamadas a herramientas + resumen ≈ 800 tokens/caso.

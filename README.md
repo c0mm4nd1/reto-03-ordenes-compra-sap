@@ -4,7 +4,7 @@ Agente conversacional en TypeScript que automatiza la lectura, validación de co
 
 ## Demo en vivo
 
-**URL pública:** _(se completa tras el despliegue — ver sección Despliegue)_
+**URL pública:** https://reto-03-ordenes-compra-sap.onrender.com (se activa al finalizar el despliegue)
 
 Enlace para probar durante la defensa técnica: chat funcional con el agente, con visualización de llamadas a herramientas y confirmaciones humanas.
 
@@ -89,7 +89,7 @@ Procesa los 6 casos de `fixtures/reto-03/solicitudes/` llamando directamente a l
 
 ## Entrega
 
-- Repositorio Git público con historial de commits: _(URL del repo)_
+- Repositorio Git público con historial de commits: https://github.com/c0mm4nd1/reto-03-ordenes-compra-sap
 - Demo sin modelo: `bun run demo.ts`
-- Enlace público del chat: _(URL del despliegue)_
+- Enlace público del chat: https://reto-03-ordenes-compra-sap.onrender.com
 - Documentación técnica: [`SOLUCION.md`](./SOLUCION.md)
