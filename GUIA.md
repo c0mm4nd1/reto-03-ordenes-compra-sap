@@ -63,7 +63,7 @@ Artefactos en `out/`: `control.csv` (auditoría de todo intento), `sap/ordenes.j
 
 ### 4.2 Chat con el modelo (URL pública)
 
-Abre la URL pública del README y prueba estos mensajes (sesión nueva cada uno):
+Abre https://reto-03-ordenes-compra-sap.vercel.app y prueba estos mensajes (sesión nueva cada uno):
 
 | # | Mensaje | Qué demuestra |
 |---|---|---|
@@ -80,7 +80,7 @@ El front muestra cada tool call (nombre, argumentos, resultado) y **resalta el e
 Crear sesión y procesar un caso:
 
 ```bash
-URL="https://TU-URL/publica"
+URL="https://reto-03-ordenes-compra-sap.vercel.app"
 
 # Salud del servicio (sin exponer claves)
 curl -s $URL/api/health

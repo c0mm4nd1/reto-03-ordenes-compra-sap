@@ -4,7 +4,7 @@ Agente conversacional en TypeScript que automatiza la lectura, validación de co
 
 ## Demo en vivo
 
-**URL pública:** https://cst-controls-configuration-liquid.trycloudflare.com
+**URL pública:** https://reto-03-ordenes-compra-sap.vercel.app
 
 Enlace para probar durante la defensa técnica: chat funcional con el agente, con visualización de llamadas a herramientas y confirmaciones humanas.
 
@@ -91,5 +91,5 @@ Procesa los 6 casos de `fixtures/reto-03/solicitudes/` llamando directamente a l
 
 - Repositorio Git público con historial de commits: https://github.com/c0mm4nd1/reto-03-ordenes-compra-sap
 - Demo sin modelo: `bun run demo.ts`
-- Enlace público del chat: https://cst-controls-configuration-liquid.trycloudflare.com
+- Enlace público del chat: https://reto-03-ordenes-compra-sap.vercel.app
 - Documentación técnica: [`SOLUCION.md`](./SOLUCION.md)
