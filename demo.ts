@@ -13,7 +13,7 @@
  */
 
 import { tools } from "./src/tools/oc.js";
-import { cleanOut } from "./src/lib/paths.js";
+import { cleanOut, outRoot } from "./src/lib/paths.js";
 import { drainLog } from "./src/lib/logger.js";
 
 const directory = process.cwd();
@@ -106,8 +106,9 @@ async function main() {
   console.log("DEMO — Agente de Órdenes de Compra (herramientas sin LLM)");
   console.log("=".repeat(78));
 
-  // Determinismo: out/ se limpia al inicio (sección 8 del PRD).
-  await cleanOut(directory + "/out");
+  // Determinismo: out/ se limpia al inicio (sección 8 del PRD). Respeta
+  // OUT_DIR para entornos serverless donde el cwd es de solo lectura.
+  await cleanOut(outRoot(directory));
 
   // Caso feliz: sin intervención humana (O1).
   await procesarCaso("sol-001");
