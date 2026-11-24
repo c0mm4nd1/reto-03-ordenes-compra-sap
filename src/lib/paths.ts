@@ -31,8 +31,11 @@ export function fileExists(p: string): boolean {
     fs.accessSync(p);
     return true;
   } catch {
-    // Serverless: los fixtures viven embebidos en DATA_ASSETS.
-    return Object.keys(DATA_ASSETS).some((rel) => p.endsWith(rel));
+    // Serverless: los fixtures viven embebidos en DATA_ASSETS. Un directorio
+    // "existe" si algún asset vive dentro de él.
+    return Object.keys(DATA_ASSETS).some(
+      (rel) => p.endsWith(rel) || rel.startsWith(p + "/")
+    );
   }
 }
 
