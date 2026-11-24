@@ -1,0 +1,24 @@
+{
+  "name": "reto-03-ordenes-compra-sap",
+  "version": "1.0.0",
+  "description": "Agente conversacional que automatiza la validación y creación de órdenes de compra en un SAP simulado (Reto técnico 03 — P_ITG)",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "start": "tsx src/server.ts",
+    "demo": "tsx demo.ts",
+    "typecheck": "tsc --noEmit",
+    "sync:modulo": "tsx scripts/sync-modulo.ts"
+  },
+  "dependencies": {
+    "tsx": "^4.20.3",
+    "zod": "^3.25.76"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  }
+}

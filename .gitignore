@@ -1,0 +1,13 @@
+# Dependencias
+node_modules/
+
+# Salidas generadas en ejecución (nunca se versionan)
+out/
+
+# Variables de entorno: contienen secretos (OWASP A02: nunca versionar claves)
+.env
+.env.local
+
+# Logs y temporales
+*.log
+.DS_Store
