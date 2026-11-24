@@ -146,11 +146,13 @@ export class GeminiAdapter implements LlmAdapter {
             // Las llamadas a herramienta del asistente se reenvían como functionCall
             // (con su thoughtSignature) para que Gemini mantenga el contexto.
             ...(m.toolCalls ?? []).map((c) => ({
+              // La thoughtSignature viaja a NIVEL DE PARTE, no dentro de
+              // functionCall (así lo exige la API en las peticiones).
               functionCall: {
                 name: c.name,
                 args: c.arguments as Record<string, unknown>,
-                ...(c.thoughtSignature ? { thoughtSignature: c.thoughtSignature } : {}),
               },
+              ...(c.thoughtSignature ? { thoughtSignature: c.thoughtSignature } : {}),
             })),
             ...(m.content ? [{ text: m.content }] : []),
           ],
