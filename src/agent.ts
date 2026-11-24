@@ -122,13 +122,15 @@ async function ejecutarTool(call: ToolCallRequest, ctx: ToolContext): Promise<Ej
   const nombre = call.name.startsWith("oc_") ? call.name.slice(3) : call.name;
   const registry = tools as unknown as Record<
     string,
-    { args: z.ZodTypeAny; execute: (a: never, c: ToolContext) => Promise<string> }
+    { args: Record<string, z.ZodTypeAny>; execute: (a: never, c: ToolContext) => Promise<string> }
   >;
   const tool = registry[nombre];
   if (!tool) {
     return { name: call.name, args: call.arguments, ok: false, result: JSON.stringify({ ok: false, error: `Herramienta desconocida: ${call.name}` }) };
   }
-  const chequeo = tool.args.safeParse(call.arguments);
+  // `args` es un objeto de esquemas; se envuelve en z.object para validar
+  // el conjunto de argumentos de la llamada (OWASP LLM05).
+  const chequeo = z.object(tool.args).safeParse(call.arguments);
   if (!chequeo.success) {
     // Argumentos inválidos: se devuelve al modelo para que corrija (CA5/HU-5).
     const detalle = chequeo.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ");

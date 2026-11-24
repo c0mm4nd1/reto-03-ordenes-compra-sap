@@ -47,7 +47,7 @@ export class GeminiAdapter implements LlmAdapter {
   private readonly baseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
   private readonly timeoutMs: number;
 
-  constructor(model?: string, timeoutMs = 30000) {
+  constructor(model?: string, timeoutMs = 60000) {
     this.apiKey = process.env.GEMINI_API_KEY ?? "";
     this.model = model || process.env.GEMINI_MODEL || "gemini-flash-latest";
     this.timeoutMs = timeoutMs;
@@ -101,9 +101,10 @@ export class GeminiAdapter implements LlmAdapter {
     clearTimeout(timer);
 
     if (!res.ok) {
-      // Mensaje de error genérico hacia el agente: nunca propagamos cuerpos
-      // crudos del proveedor (pueden contener detalles internos de la cuenta).
-      throw new Error(`El proveedor LLM respondió ${res.status}. Revisa la clave y el modelo.`);
+      // Mensaje de error acotado hacia el agente: se incluye el detalle que
+      // da el proveedor (no contiene la clave) para depuración, truncado.
+      const detalle = (await res.text()).slice(0, 300);
+      throw new Error(`El proveedor LLM respondió ${res.status}: ${detalle}`);
     }
 
     const parsed = GeminiResponseSchema.parse(await res.json());
