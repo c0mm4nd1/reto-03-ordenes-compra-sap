@@ -146,8 +146,9 @@ export class GeminiAdapter implements LlmAdapter {
           ],
         };
       case "tool":
-        // Resultado de herramienta: Gemini espera role "function" con la respuesta.
-        return { role: "function", parts: [{ functionResponse: { name: m.name, response: { result: m.content } } }] };
+        // Resultado de herramienta: la API actual de Gemini exige que los
+        // functionResponse viajen como contenido de rol "user".
+        return { role: "user", parts: [{ functionResponse: { name: m.name, response: { result: m.content } } }] };
       default:
         throw new Error(`Rol no soportado: ${(m as ChatMessage).role}`);
     }
