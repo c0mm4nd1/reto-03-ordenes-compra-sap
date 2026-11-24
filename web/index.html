@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agente de Órdenes de Compra — P_ITG</title>
+  <style>
+    :root { --azul: #1450a3; --fondo: #f4f6fa; --burbuja: #ffffff; --agente: #e8f0fe; --alerta: #fff4e5; --borde: #d9dee7; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: var(--fondo); height: 100vh; display: flex; flex-direction: column; }
+    header { background: var(--azul); color: #fff; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { font-size: 16px; margin: 0; }
+    #estado { font-size: 12px; opacity: .85; }
+    #chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; max-width: 860px; width: 100%; margin: 0 auto; }
+    .msg { padding: 10px 14px; border-radius: 12px; max-width: 85%; white-space: pre-wrap; line-height: 1.45; font-size: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+    .user { align-self: flex-end; background: var(--azul); color: #fff; }
+    .assistant { align-self: flex-start; background: var(--agente); border: 1px solid var(--borde); }
+    .confirmacion { align-self: flex-start; background: var(--alerta); border: 2px solid #f0a500; font-weight: 600; }
+    .tool { align-self: stretch; background: #1e1e1e; color: #d4d4d4; font-family: "Cascadia Code", Consolas, monospace; font-size: 12px; border-radius: 8px; padding: 10px 14px; }
+    .tool .nombre { color: #7ee787; font-weight: 700; }
+    .tool .error { color: #ff7b72; }
+    .tool details { margin-top: 6px; }
+    .tool summary { cursor: pointer; color: #79c0ff; }
+    #pensando { align-self: flex-start; font-style: italic; color: #667; display: none; }
+    #entrada { display: flex; gap: 8px; padding: 14px 20px; background: #fff; border-top: 1px solid var(--borde); max-width: 860px; width: 100%; margin: 0 auto; }
+    #mensaje { flex: 1; padding: 10px 14px; border: 1px solid var(--borde); border-radius: 20px; font-size: 14px; }
+    #enviar { padding: 10px 22px; border: 0; border-radius: 20px; background: var(--azul); color: #fff; font-size: 14px; cursor: pointer; }
+    #enviar:disabled { opacity: .5; cursor: wait; }
+    .sugerencia { font-size: 12px; color: #667; text-align: center; padding-bottom: 8px; }
+    .sugerencia button { border: 1px solid var(--borde); background: #fff; border-radius: 12px; padding: 3px 10px; margin: 0 3px; cursor: pointer; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Agente de Órdenes de Compra — SAP simulado (Reto 3 · P_ITG)</h1>
+    <span id="estado">conectando…</span>
+  </header>
+  <div id="chat">
+    <div class="msg assistant">Hola, soy el agente de órdenes de compra. Dime qué caso procesar (ej. «Procesa la solicitud sol-004 y no la crees hasta que yo confirme»). Las llamadas a herramientas se muestran abajo de cada respuesta.</div>
+  </div>
+  <div id="pensando">pensando…</div>
+  <form id="entrada">
+    <input id="mensaje" autocomplete="off" placeholder="Escribe tu instrucción…" />
+    <button id="enviar" type="submit">Enviar</button>
+  </form>
+  <div class="sugerencia">
+    Probar:
+    <button type="button" data-msg='Procesa la solicitud sol-001'>sol-001 (flujo feliz)</button>
+    <button type="button" data-msg='Procesa la solicitud sol-002'>sol-002 (proveedor inexistente)</button>
+    <button type="button" data-msg='Procesa la solicitud sol-004 y no la crees hasta que yo confirme'>sol-004 (confirmación)</button>
+    <button type="button" data-msg='Procesa la solicitud sol-005'>sol-005 (retroactiva)</button>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>
