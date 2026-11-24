@@ -31,11 +31,16 @@ export function fileExists(p: string): boolean {
     fs.accessSync(p);
     return true;
   } catch {
-    // Serverless: los fixtures viven embebidos en DATA_ASSETS. Un directorio
-    // "existe" si algún asset vive dentro de él.
-    return Object.keys(DATA_ASSETS).some(
-      (rel) => p.endsWith(rel) || rel.startsWith(p + "/")
-    );
+    // Serverless: los fixtures viven embebidos en DATA_ASSETS (claves
+    // relativas al proyecto). Un archivo existe si su clave coincide por
+    // sufijo; un directorio, si coincide con el directorio padre de alguna.
+    const normalizado = p.replace(/\\/g, "/");
+    return Object.keys(DATA_ASSETS).some((rel) => {
+      const r = rel.replace(/\\/g, "/");
+      if (normalizado.endsWith(r)) return true;
+      const padre = r.slice(0, r.lastIndexOf("/"));
+      return padre.length > 0 && normalizado.endsWith(padre);
+    });
   }
 }
 
