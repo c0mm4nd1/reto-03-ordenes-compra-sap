@@ -189,3 +189,12 @@ if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1])))
     console.log(`Proveedor LLM: ${llm.provider}/${llm.model} (${llm.configured ? "configurado" : "SIN CLAVE — solo demo.ts funcionará"})`);
   });
 }
+
+/**
+ * Handler serverless (Vercel): el runtime de Vercel exige un default export
+ * función/servidor en el módulo de entrada. Enruta la petición por el mismo
+ * pipeline HTTP que en local; no interfiere con el arranque directo.
+ */
+export default function serverlessHandler(req: http.IncomingMessage, res: http.ServerResponse) {
+  createServer().emit("request", req, res);
+}
