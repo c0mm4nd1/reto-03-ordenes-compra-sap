@@ -6,6 +6,7 @@ import { runTurno } from "./agent.js";
 import { historialVisible, nuevaSesion, obtenerSesion } from "./session.js";
 import { GeminiAdapter } from "./llm/gemini.js";
 import { safeJoin } from "./lib/paths.js";
+import { APP_JS, INDEX_HTML } from "./webAssets.js";
 
 /**
  * Servidor HTTP del agente (API 6.4 del PRD + front estático).
@@ -157,7 +158,20 @@ async function serveStatic(res: http.ServerResponse, url: URL): Promise<void> {
     const tipo = path.extname(archivo) === ".html" ? "text/html; charset=utf-8" : "text/plain; charset=utf-8";
     res.writeHead(200, { "Content-Type": tipo, ...SECURITY_HEADERS });
     res.end(data);
+    return;
   } catch {
+    // Serverless (Vercel): los estáticos no viajan en el bundle de la
+    // función; se sirven embebidos desde src/webAssets.ts (fuente: web/).
+    if (ruta === "/index.html") {
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", ...SECURITY_HEADERS });
+      res.end(INDEX_HTML);
+      return;
+    }
+    if (ruta === "/app.js") {
+      res.writeHead(200, { "Content-Type": "text/javascript; charset=utf-8", ...SECURITY_HEADERS });
+      res.end(APP_JS);
+      return;
+    }
     json(res, 404, { error: "No encontrado" });
   }
 }

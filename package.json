@@ -8,7 +8,8 @@
     "start": "tsx src/server.ts",
     "demo": "tsx demo.ts",
     "typecheck": "tsc --noEmit",
-    "sync:modulo": "tsx scripts/sync-modulo.ts"
+    "sync:modulo": "tsx scripts/sync-modulo.ts",
+    "sync:web": "tsx scripts/sync-web.ts"
   },
   "dependencies": {
     "tsx": "^4.20.3",

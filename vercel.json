@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npx tsc -p tsconfig.vercel.json && npx esbuild api/index.js --bundle --platform=node --format=esm --outfile=api/bundle.js",
+  "buildCommand": "npx tsx scripts/sync-web.ts && npx tsc -p tsconfig.vercel.json && npx esbuild api/index.js --bundle --platform=node --format=esm --outfile=api/bundle.js",
   "rewrites": [{ "source": "/(.*)", "destination": "/api/bundle" }],
   "functions": { "api/bundle.js": { "maxDuration": 60 } }
 }
