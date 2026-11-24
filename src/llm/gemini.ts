@@ -63,6 +63,24 @@ export class GeminiAdapter implements LlmAdapter {
   }
 
   async enviar(mensajes: ChatMessage[], herramientas: ToolSpec[]): Promise<LlmResponse> {
+    // Reintentos con backoff ante saturación del proveedor (503/500): los
+    // picos de demanda son temporales; tres intentos con espera exponencial.
+    const MAX_REINTENTOS = 3;
+    let ultimoError: Error | null = null;
+    for (let intento = 0; intento <= MAX_REINTENTOS; intento++) {
+      try {
+        return await this.enviarUnaVez(mensajes, herramientas);
+      } catch (err) {
+        ultimoError = err as Error;
+        const reintentable = /respondió (503|500|429)/.test(ultimoError.message);
+        if (!reintentable || intento === MAX_REINTENTOS) throw err;
+        await new Promise((r) => setTimeout(r, 2000 * 2 ** intento));
+      }
+    }
+    throw ultimoError ?? new Error("Error desconocido del proveedor");
+  }
+
+  private async enviarUnaVez(mensajes: ChatMessage[], herramientas: ToolSpec[]): Promise<LlmResponse> {
     if (!this.configured) {
       throw new Error("GEMINI_API_KEY no configurada en el entorno del servidor.");
     }
