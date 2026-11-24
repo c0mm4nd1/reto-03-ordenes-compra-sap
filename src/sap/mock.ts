@@ -3,7 +3,7 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import type { SapAdapter } from "./adapter.js";
 import type { OrdenCompra } from "../types.js";
-import { safeJoin, writeFileEnsured } from "../lib/paths.js";
+import { outPath, writeFileEnsured } from "../lib/paths.js";
 
 /**
  * SAP simulado con archivos (src/sap/mock.ts).
@@ -26,8 +26,8 @@ export class MockSapAdapter implements SapAdapter {
   constructor(
     private readonly directory: string // raíz del proyecto
   ) {
-    this.ordenesPath = safeJoin(directory, "out", "sap", "ordenes.jsonl");
-    this.secuenciaPath = safeJoin(directory, "out", "sap", "secuencia.txt");
+    this.ordenesPath = outPath(directory, "sap", "ordenes.jsonl");
+    this.secuenciaPath = outPath(directory, "sap", "secuencia.txt");
   }
 
   async consultarProveedor(nit: string): Promise<{ codigo_sap: string; activo: boolean } | null> {

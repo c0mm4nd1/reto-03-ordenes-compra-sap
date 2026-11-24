@@ -11,3 +11,4 @@ out/
 # Logs y temporales
 *.log
 .DS_Store
+out/

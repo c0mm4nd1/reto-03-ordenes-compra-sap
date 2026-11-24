@@ -19,7 +19,7 @@ import {
   sha256,
   validarPaquete,
 } from "../rules.js";
-import { fileExists, readJson, safeJoin, writeFileEnsured } from "../lib/paths.js";
+import { fileExists, outPath, readJson, safeJoin, writeFileEnsured } from "../lib/paths.js";
 import { logToolCall } from "../lib/logger.js";
 import { MockSapAdapter } from "../sap/mock.js";
 
@@ -74,7 +74,7 @@ async function respond<A>(
     result = { ok: false, error: `Error interno de ${name}: ${(err as Error).message}` };
     resumen = (err as Error).message.slice(0, 200);
   }
-  logToolCall(safeJoin(ctx.directory, "out", "log.jsonl"), {
+  logToolCall(outPath(ctx.directory, "log.jsonl"), {
     ts: new Date().toISOString(),
     herramienta: name,
     ok,
@@ -142,7 +142,7 @@ async function registrarControl(
     confirmaciones: string;
   }
 ): Promise<void> {
-  const p = safeJoin(directory, "out", "control.csv");
+  const p = outPath(directory, "control.csv");
   const existe = fileExists(p);
   const esc = (s: string) => `"${s.replace(/"/g, '""')}"`;
   const linea = [
@@ -228,7 +228,7 @@ export const construir_payload: ToolDef<{ caso: z.ZodString }> = {
         ? sha256(buildEvidenceContent(paquete.aprobacion))
         : "";
       const { orden, trazabilidad } = construirOrden(paquete, v, maestros, evidenciaSha);
-      const ruta = safeJoin(ctx.directory, "out", args.caso, "trazabilidad.json");
+      const ruta = outPath(ctx.directory, args.caso, "trazabilidad.json");
       await writeFileEnsured(ruta, JSON.stringify(trazabilidad, null, 2));
       return { ok: true, data: { caso: args.caso, payload: orden, trazabilidad_ruta: `out/${args.caso}/trazabilidad.json` } };
     });
@@ -250,7 +250,7 @@ export const generar_evidencia: ToolDef<{ caso: z.ZodString }> = {
         return { ok: false, error: "No hay correo de aprobación para generar evidencia." };
       }
       const contenido = buildEvidenceContent(paquete.aprobacion);
-      const ruta = safeJoin(ctx.directory, "out", args.caso, "aprobacion.txt");
+      const ruta = outPath(ctx.directory, args.caso, "aprobacion.txt");
       await writeFileEnsured(ruta, contenido);
       // El hash es sobre el cuerpo canónico (mismo valor que queda en el payload).
       const hash = sha256(buildEvidenceBody(paquete.aprobacion) + "\n");

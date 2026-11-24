@@ -51,6 +51,19 @@ export async function cleanOut(outDir: string): Promise<void> {
   await fsp.mkdir(outDir, { recursive: true });
 }
 
+/**
+ * Raíz del directorio de salida. En local es <proyecto>/out; en serverless
+ * (p.ej. Vercel, donde el cwd es de solo lectura) se define OUT_DIR=/tmp/out.
+ */
+export function outRoot(directory: string): string {
+  return process.env.OUT_DIR ? path.resolve(process.env.OUT_DIR) : safeJoin(directory, "out");
+}
+
+/** Resuelve una ruta dentro de out/ respetando OUT_DIR y el anti-traversal. */
+export function outPath(directory: string, ...segments: string[]): string {
+  return safeJoin(outRoot(directory), ...segments);
+}
+
 /** Normaliza un NIT comparando solo dígitos (ignora puntos y dígito de verificación). */
 export function normalizeNit(nit: string): string {
   return nit.replace(/\D/g, "");
