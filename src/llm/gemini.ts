@@ -52,7 +52,7 @@ export class GeminiAdapter implements LlmAdapter {
   private readonly baseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
   private readonly timeoutMs: number;
 
-  constructor(model?: string, timeoutMs = 60000) {
+  constructor(model?: string, timeoutMs = 120000) {
     this.apiKey = process.env.GEMINI_API_KEY ?? "";
     this.model = model || process.env.GEMINI_MODEL || "gemini-flash-latest";
     this.timeoutMs = timeoutMs;
@@ -72,7 +72,7 @@ export class GeminiAdapter implements LlmAdapter {
         return await this.enviarUnaVez(mensajes, herramientas);
       } catch (err) {
         ultimoError = err as Error;
-        const reintentable = /respondió (503|500|429)/.test(ultimoError.message);
+        const reintentable = /respondió (503|500|429)/.test(ultimoError.message) || ultimoError.message.includes("Timeout");
         if (!reintentable || intento === MAX_REINTENTOS) throw err;
         await new Promise((r) => setTimeout(r, 2000 * 2 ** intento));
       }
