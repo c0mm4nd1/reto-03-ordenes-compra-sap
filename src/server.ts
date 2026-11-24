@@ -166,7 +166,11 @@ export function createServer(): http.Server {
   return http.createServer(async (req, res) => {
     const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
     try {
-      if (url.pathname.startsWith("/api/")) {
+      // En Vercel, las rewrites envían todo al path de la función serverless
+      // (/api/bundle): se normaliza a "/" para servir el front desde Node.
+      if (url.pathname === "/api/bundle" || url.pathname === "/api/index") {
+        await serveStatic(res, new URL("/", "http://localhost"));
+      } else if (url.pathname.startsWith("/api/")) {
         await handleApi(req, res, url);
       } else if (req.method === "GET") {
         await serveStatic(res, url);
