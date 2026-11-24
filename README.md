@@ -33,7 +33,7 @@ Procesa los 6 casos de `fixtures/reto-03/solicitudes/` llamando directamente a l
 | Variable | Obligatoria | Descripción |
 |---|---|---|
 | `GEMINI_API_KEY` | Solo para el chat con modelo | Clave del proveedor LLM. **Solo existe en el entorno del backend**: nunca en el repo, el front, los logs ni las respuestas de la API. |
-| `GEMINI_MODEL` | No | Por defecto `gemini-2.0-flash`. |
+| `GEMINI_MODEL` | No | Por defecto `gemini-flash-latest`. |
 | `MAX_ITERATIONS_PER_TURN` | No | Tope de iteraciones herramienta→modelo por turno (25). |
 | `MAX_TOKENS_PER_SESSION` | No | Tope acumulado de tokens por sesión (20000). |
 | `RATE_LIMIT_WINDOW_MS` / `RATE_LIMIT_MAX_REQUESTS` | No | Rate limit de `/api/chat` (60 s / 12 req por IP). |

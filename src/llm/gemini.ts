@@ -49,7 +49,7 @@ export class GeminiAdapter implements LlmAdapter {
 
   constructor(model?: string, timeoutMs = 30000) {
     this.apiKey = process.env.GEMINI_API_KEY ?? "";
-    this.model = model || process.env.GEMINI_MODEL || "gemini-2.0-flash";
+    this.model = model || process.env.GEMINI_MODEL || "gemini-flash-latest";
     this.timeoutMs = timeoutMs;
   }
 
@@ -152,12 +152,12 @@ export class GeminiAdapter implements LlmAdapter {
     }
   }
 
-  /** Nuestros esquemas zod ya son objetos JSON Schema compatibles. */
+  /** Declaración de función con parámetros JSON Schema convertidos desde zod. */
   private toDeclaration(t: ToolSpec) {
     return {
       name: t.name,
       description: t.description,
-      parameters: { type: "OBJECT", properties: t.args },
+      parameters: t.args,
     };
   }
 }
