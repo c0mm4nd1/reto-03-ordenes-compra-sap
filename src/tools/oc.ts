@@ -19,7 +19,7 @@ import {
   sha256,
   validarPaquete,
 } from "../rules.js";
-import { fileExists, outPath, readJson, safeJoin, writeFileEnsured } from "../lib/paths.js";
+import { fileExists, outPath, readAssetText, readJson, safeJoin, writeFileEnsured } from "../lib/paths.js";
 import { logToolCall } from "../lib/logger.js";
 import { MockSapAdapter } from "../sap/mock.js";
 
@@ -101,7 +101,7 @@ async function cargarPaquete(directory: string, caso: string): Promise<Paquete> 
   const faltantes: string[] = [];
   const cotizacionPath = safeJoin(base, "cotizacion.txt");
   const cotizacion = fileExists(cotizacionPath)
-    ? parseCotizacion(await fsp.readFile(cotizacionPath, "utf8"))
+    ? parseCotizacion(await readAssetText(cotizacionPath))
     : (faltantes.push("cotizacion.txt"), null);
 
   const aprobacionPath = safeJoin(base, "aprobacion.json");
@@ -116,7 +116,7 @@ async function cargarPaquete(directory: string, caso: string): Promise<Paquete> 
 
   const facturaPath = safeJoin(base, "factura.txt");
   const factura = fileExists(facturaPath)
-    ? parseFactura(await fsp.readFile(facturaPath, "utf8"))
+    ? parseFactura(await readAssetText(facturaPath))
     : null;
   if (correo.adjuntos.includes("factura.pdf") && !factura) faltantes.push("factura.txt");
 

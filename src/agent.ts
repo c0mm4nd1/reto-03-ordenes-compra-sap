@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { ChatMessage, LlmAdapter, toToolSpecs, ToolCallRequest } from "./llm/adapter.js";
 import { tools, ToolContext } from "./tools/oc.js";
-import { readFile } from "node:fs/promises";
-import { safeJoin } from "./lib/paths.js";
+import { readAssetText, safeJoin } from "./lib/paths.js";
 
 /**
  * Ciclo del agente (sección 6.3 del PRD): prompt → modelo → llamadas a
@@ -46,7 +45,7 @@ let systemPromptCache: string | null = null;
 /** Carga el system prompt desde su archivo Markdown (obligatorio: no embebido). */
 export async function loadSystemPrompt(directory: string): Promise<string> {
   if (systemPromptCache) return systemPromptCache;
-  const raw = await readFile(safeJoin(directory, "agent", "prompt.md"), "utf8");
+  const raw = await readAssetText(safeJoin(directory, "agent", "prompt.md"));
   // El system prompt nunca se expone por la API (OWASP LLM07).
   systemPromptCache = raw;
   return raw;

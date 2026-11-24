@@ -9,7 +9,8 @@
     "demo": "tsx demo.ts",
     "typecheck": "tsc --noEmit",
     "sync:modulo": "tsx scripts/sync-modulo.ts",
-    "sync:web": "tsx scripts/sync-web.ts"
+    "sync:web": "tsx scripts/sync-web.ts",
+    "sync:data": "tsx scripts/sync-data.ts"
   },
   "dependencies": {
     "tsx": "^4.20.3",

@@ -1,6 +1,7 @@
 import path from "node:path";
 import fs from "node:fs";
 import fsp from "node:fs/promises";
+import { DATA_ASSETS } from "../dataAssets.js";
 
 /**
  * Resolución segura de rutas (OWASP A01/A03: path traversal).
@@ -30,13 +31,29 @@ export function fileExists(p: string): boolean {
     fs.accessSync(p);
     return true;
   } catch {
-    return false;
+    // Serverless: los fixtures viven embebidos en DATA_ASSETS.
+    return Object.keys(DATA_ASSETS).some((rel) => p.endsWith(rel));
   }
 }
 
 export async function readJson<T>(p: string): Promise<T> {
-  const raw = await fsp.readFile(p, "utf8");
+  const raw = await readAssetText(p);
   return JSON.parse(raw) as T;
+}
+
+/**
+ * Lee un archivo de texto; si no existe en disco (serverless), lo busca en
+ * los assets embebidos (DATA_ASSETS) por coincidencia de sufijo de ruta.
+ */
+export async function readAssetText(p: string): Promise<string> {
+  try {
+    return await fsp.readFile(p, "utf8");
+  } catch (err) {
+    for (const [rel, contenido] of Object.entries(DATA_ASSETS)) {
+      if (p.endsWith(rel)) return contenido;
+    }
+    throw err;
+  }
 }
 
 /** Escribe un archivo creando los directorios padre de forma segura. */
